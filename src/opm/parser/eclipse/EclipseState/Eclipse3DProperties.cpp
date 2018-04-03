@@ -382,6 +382,7 @@ namespace Opm {
         supportedDoubleKeywords.emplace_back( "SGAS", 0.0 , "1", true );
         supportedDoubleKeywords.emplace_back( "SSOL", 0.0 , "1", true );
         supportedDoubleKeywords.emplace_back( "SPOLY", 0.0 , "Density", true );
+        supportedDoubleKeywords.emplace_back( "SPOLYMW", 0.0 , "1", true );
         supportedDoubleKeywords.emplace_back( "RS",  0.0, "1", true );
         supportedDoubleKeywords.emplace_back( "RV",  0.0, "1", true );
 
@@ -967,15 +968,6 @@ namespace Opm {
                 throw std::invalid_argument("Fatal error processing EQUALS keyword. Tried to assign not defined keyword " + field);
 
         }
-    }
-
-
-
-    MessageContainer Eclipse3DProperties::getMessageContainer() {
-        MessageContainer messages;
-        messages.appendMessages(m_intGridProperties.getMessageContainer());
-        messages.appendMessages(m_doubleGridProperties.getMessageContainer());
-        return messages;
     }
 
 }

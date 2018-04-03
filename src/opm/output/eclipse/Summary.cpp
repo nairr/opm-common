@@ -329,8 +329,12 @@ inline quantity production_history( const fn_args& args ) {
      */
 
     double sum = 0.0;
-    for( const Well* sched_well : args.schedule_wells )
-        sum += sched_well->production_rate( phase, args.sim_step );
+    for( const Well* sched_well : args.schedule_wells ){
+
+        double eff_fac = efac( args.eff_factors, sched_well->name() );
+        sum += sched_well->production_rate( phase, args.sim_step ) * eff_fac;
+    }
+
 
     return { sum, rate_unit< phase >() };
 }
@@ -339,8 +343,12 @@ template< Phase phase >
 inline quantity injection_history( const fn_args& args ) {
 
     double sum = 0.0;
-    for( const Well* sched_well : args.schedule_wells )
-        sum += sched_well->injection_rate( phase, args.sim_step );
+    for( const Well* sched_well : args.schedule_wells ){
+
+        double eff_fac = efac( args.eff_factors, sched_well->name() );
+        sum += sched_well->injection_rate( phase, args.sim_step ) * eff_fac;
+    }
+
 
     return { sum, rate_unit< phase >() };
 }
@@ -834,23 +842,26 @@ Summary::Summary( const EclipseState& st,
 
     const auto& init_config = st.getInitConfig();
     const char * restart_case = nullptr;
+    int restart_step = -1;
 
     if (init_config.restartRequested( )) {
-        if (init_config.getRestartRootName().size() <= ECL_STRING8_LENGTH * SUMMARY_RESTART_SIZE)
+        if (init_config.getRestartRootName().size() <= ECL_STRING8_LENGTH * SUMMARY_RESTART_SIZE) {
             restart_case = init_config.getRestartRootName().c_str();
-        else
+            restart_step = init_config.getRestartStep();
+        } else
             OpmLog::warning("Restart case too long - not embedded in SMSPEC file");
     }
-    ecl_sum.reset( ecl_sum_alloc_restart_writer(basename,
-                                                restart_case,
-                                                st.getIOConfig().getFMTOUT(),
-                                                st.getIOConfig().getUNIFOUT(),
-                                                ":",
-                                                schedule.posixStartTime(),
-                                                true,
-                                                st.getInputGrid().getNX(),
-                                                st.getInputGrid().getNY(),
-                                                st.getInputGrid().getNZ()));
+    ecl_sum.reset( ecl_sum_alloc_restart_writer2(basename,
+                                                 restart_case,
+                                                 restart_step,
+                                                 st.getIOConfig().getFMTOUT(),
+                                                 st.getIOConfig().getUNIFOUT(),
+                                                 ":",
+                                                 schedule.posixStartTime(),
+                                                 true,
+                                                 st.getInputGrid().getNX(),
+                                                 st.getInputGrid().getNY(),
+                                                 st.getInputGrid().getNZ()));
 
     /* register all keywords handlers and pair with the newly-registered ert
      * entry.
