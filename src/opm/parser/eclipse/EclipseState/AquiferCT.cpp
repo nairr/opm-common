@@ -36,9 +36,7 @@ namespace Opm {
                 data.c1 = 0.006328*1.5797e5; // conversion factor constant C1 to SI
                 data.c2 = 1.1191*5.6164; // conversion factor constant C2 to SI
             }
-
             else if( deck.hasKeyword( "METRIC" )) {
-              
                 data.c1 = 0.008527*117.26852; // conversion factor constant C1 to SI
                 data.c2 = 6.283; // conversion factor constant C2 to SI        
             }
@@ -47,7 +45,6 @@ namespace Opm {
             data.h = aquctRecord.getItem("THICKNESS_AQ").getSIDouble(0);
             data.p0 = aquctRecord.getItem("P_INI").getSIDouble(0);
             data.p0_defaulted = aquctRecord.getItem("P_INI").defaultApplied(0);
-            data.p0 = aquctRecord.getItem("P_INI").getSIDouble(0);
             data.phi_aq = aquctRecord.getItem("PORO_AQ").getSIDouble(0);
             data.d0 = aquctRecord.getItem("DAT_DEPTH").getSIDouble(0);
             data.C_t = aquctRecord.getItem("C_T").getSIDouble(0);
